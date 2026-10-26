@@ -5,11 +5,13 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.course</groupId>
-    <artifactId>helloworld</artifactId>
+    <artifactId>jakartaee-course</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>war</packaging>
 
     <properties>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
         <maven.compiler.release>21</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <failOnMissingWebXml>false</failOnMissingWebXml>
@@ -25,6 +27,6 @@
     </dependencies>
 
     <build>
-        <finalName>helloworld</finalName>
+        <finalName>jakartaee-course</finalName>
     </build>
 </project>
