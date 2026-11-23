@@ -1,5 +1,8 @@
 package com.course.catalog.web;
 
+import com.course.catalog.service.CartService;
+import com.course.catalog.service.OrderService;
+import jakarta.inject.Inject;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -11,9 +14,16 @@ import java.io.IOException;
 @WebServlet("/checkout")
 public class CheckoutServlet extends HttpServlet {
 
+    @Inject
+    private OrderService orderService;
+
+    @Inject
+    private CartService cartService;
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
+        req.setAttribute("cart", cartService.getItems());
         req.getRequestDispatcher("/WEB-INF/views/checkout.jsp").forward(req, resp);
     }
 
@@ -24,10 +34,14 @@ public class CheckoutServlet extends HttpServlet {
         String email = req.getParameter("email");
         String address = req.getParameter("address");
 
-        // Order creation logic arrives properly in Chapter 3 (EJB service layer).
-        req.getSession().removeAttribute("cart"); // clear cart on checkout
+        try {
+            orderService.createOrder(name, email, address);
+            req.setAttribute("confirmationName", name);
+        } catch (IllegalStateException e) {
+            req.setAttribute("errorMessage", e.getMessage());
+            req.setAttribute("cart", cartService.getItems());
+        }
 
-        req.setAttribute("confirmationName", name);
         req.getRequestDispatcher("/WEB-INF/views/checkout.jsp").forward(req, resp);
     }
 }
