@@ -1,5 +1,6 @@
 package com.course.catalog.web;
 
+import com.course.catalog.model.ProductDTO;
 import com.course.catalog.service.CartService;
 import com.course.catalog.service.ProductService;
 import jakarta.inject.Inject;
@@ -30,8 +31,14 @@ public class CartServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        Long productId = Long.valueOf(req.getParameter("productId"));
-        cartService.addItem(productService.getProduct(productId));
+        String productIdParam = req.getParameter("productId");
+        if (productIdParam != null && !productIdParam.trim().isEmpty()) {
+            Long productId = Long.valueOf(productIdParam.trim());
+            ProductDTO product = productService.getProduct(productId);
+            if (product != null) {
+                cartService.addItem(product);
+            }
+        }
         resp.sendRedirect(req.getContextPath() + "/cart");
     }
 }
