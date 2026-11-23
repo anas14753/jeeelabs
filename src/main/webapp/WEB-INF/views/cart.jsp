@@ -4,8 +4,10 @@
 
 <h2>Shopping Cart</h2>
 
+<c:set var="cartItems" value="${not empty cart ? cart : (not empty sessionScope.cart ? sessionScope.cart : cartService.items)}" />
+
 <c:choose>
-    <c:when test="${not empty sessionScope.cart}">
+    <c:when test="${not empty cartItems}">
         <table>
             <thead>
                 <tr>
@@ -16,7 +18,7 @@
             </thead>
             <tbody>
                 <c:set var="total" value="0" />
-                <c:forEach var="item" items="${sessionScope.cart}">
+                <c:forEach var="item" items="${cartItems}">
                     <tr>
                         <td>${item.name}</td>
                         <td>${item.category}</td>

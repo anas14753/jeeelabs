@@ -11,8 +11,15 @@
     <p><a href="${pageContext.request.contextPath}/catalog/products" class="btn btn-primary">Continue Shopping</a></p>
 </c:if>
 
+<c:if test="${not empty errorMessage}">
+    <div class="alert alert-danger" style="background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; padding: 1rem; border-radius: 4px; margin-bottom: 1rem;">
+        <strong>Error:</strong> ${errorMessage}
+    </div>
+</c:if>
+
 <c:if test="${empty confirmationName}">
-    <c:if test="${not empty sessionScope.cart}">
+    <c:set var="cartItems" value="${not empty cart ? cart : (not empty sessionScope.cart ? sessionScope.cart : cartService.items)}" />
+    <c:if test="${not empty cartItems}">
         <h3>Order Summary</h3>
         <table style="margin-bottom: 1.5rem;">
             <thead>
@@ -20,7 +27,7 @@
             </thead>
             <tbody>
                 <c:set var="total" value="0" />
-                <c:forEach var="item" items="${sessionScope.cart}">
+                <c:forEach var="item" items="${cartItems}">
                     <tr>
                         <td>${item.name}</td>
                         <td><fmt:formatNumber value="${item.price}" type="currency"/></td>

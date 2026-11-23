@@ -1,10 +1,17 @@
 package com.course.catalog.model;
 
-public class ProductDTO {
+import java.io.Serializable;
+
+public class ProductDTO implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private Long id;
     private String name;
     private String category;
     private double price;
+
+    public ProductDTO() {
+    }
 
     public ProductDTO(Long id, String name, String category, double price) {
         this.id = id;
