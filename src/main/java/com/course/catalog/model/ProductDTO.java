@@ -1,6 +1,8 @@
 package com.course.catalog.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ProductDTO implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -9,6 +11,7 @@ public class ProductDTO implements Serializable {
     private String name;
     private String category;
     private double price;
+    private List<Review> reviews = new ArrayList<>();
 
     public ProductDTO() {
     }
@@ -20,8 +23,30 @@ public class ProductDTO implements Serializable {
         this.price = price;
     }
 
+    public ProductDTO(Product product) {
+        if (product != null) {
+            this.id = product.getId();
+            this.name = product.getName();
+            this.category = product.getCategory();
+            this.price = product.getPrice() != null ? product.getPrice() : 0.0;
+            if (product.getReviews() != null) {
+                this.reviews = new ArrayList<>(product.getReviews());
+            }
+        }
+    }
+
     public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+
     public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+
     public String getCategory() { return category; }
+    public void setCategory(String category) { this.category = category; }
+
     public double getPrice() { return price; }
+    public void setPrice(double price) { this.price = price; }
+
+    public List<Review> getReviews() { return reviews; }
+    public void setReviews(List<Review> reviews) { this.reviews = reviews; }
 }

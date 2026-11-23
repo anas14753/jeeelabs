@@ -1,9 +1,18 @@
 package com.course.catalog.service;
 
+import com.course.catalog.model.*;
+import com.course.catalog.repository.CustomerRepository;
+import com.course.catalog.repository.OrderRepository;
+import com.course.catalog.repository.ProductRepository;
 import jakarta.ejb.Stateless;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
+/**
+ * Step 6 & Chapter 4 Activity 2:
+ * OrderService manages transactional boundaries for creating real orders in the database.
+ * Uses CustomerRepository, ProductRepository, and OrderRepository with cascade persistence.
+ */
 @Stateless
 public class OrderService {
 
@@ -13,17 +22,44 @@ public class OrderService {
     @Inject
     private CartService cartService;
 
+    @Inject
+    private OrderRepository orderRepository;
+
+    @Inject
+    private CustomerRepository customerRepository;
+
+    @Inject
+    private ProductRepository productRepository;
+
     @Transactional
     public void createOrder(String name, String email, String address) {
-        // Chapter 3 Activity 3: Guard against an empty cart
-        // @Transactional ensures that if an exception is thrown, any operations roll back
-        // and no order notification or state change completes.
         if (cartService.getItems().isEmpty()) {
             throw new IllegalStateException("Cannot place an order with an empty cart.");
         }
 
-        // Order persistence arrives in Chapter 4 — for now, this represents
-        // the transactional boundary the real save will live inside.
+        // Find existing customer or register a new one
+        Customer customer = customerRepository.findByEmail(email);
+        if (customer == null) {
+            customer = new Customer(name, email);
+            customerRepository.save(customer);
+        }
+
+        // Create Order
+        Order order = new Order(customer);
+
+        // Populate OrderItems from the current cart
+        for (ProductDTO item : cartService.getItems()) {
+            Product product = productRepository.findById(item.getId());
+            if (product != null) {
+                OrderItem orderItem = new OrderItem(order, product, 1);
+                order.addItem(orderItem);
+            }
+        }
+
+        // Persist order (cascades to order_items)
+        orderRepository.save(order);
+
+        // Notify and clear session cart
         notificationService.logOrderConfirmation(name);
         cartService.clear();
     }
